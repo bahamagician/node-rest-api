@@ -7,6 +7,11 @@ router.get("/", homeController.index);
 
 router.get("/blogs", blogController.index);
 router.get("/blogs/:id", blogController.show);
-router.post("/blogs", blogController.store);
+router.post(
+  "/blogs",
+  blogController.upload,
+  blogController.resize,
+  blogController.store
+);
 
 module.exports = router;

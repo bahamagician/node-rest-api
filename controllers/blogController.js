@@ -1,6 +1,22 @@
 const mongoose = require("mongoose");
 const { Blog, validate } = require("../models/Blog");
 const _ = require("lodash");
+const multer = require("multer");
+const jimp = require("jimp");
+const uuid = require("uuid");
+
+// Configure Multer
+const multerOptions = {
+  storage: multer.memoryStorage(),
+  fileFilter(req, file, next) {
+    const isPhoto = file.mimetype.startsWith("image/");
+    if (isPhoto) {
+      next(null, true);
+    } else {
+      next({ message: "That filetype isn't allowed!" }, false);
+    }
+  }
+};
 
 exports.index = async (req, res) => {
   const blogs = await Blog.find().sort("_id");
@@ -13,11 +29,36 @@ exports.show = async (req, res) => {
   res.send(blog);
 };
 
-exports.store = async (req, res) => {
+exports.upload = multer(multerOptions).single("image");
+
+exports.resize = async (err, req, res, next) => {
+  // If multer's config detects an invalid image type...
+  if (err) return res.status(400).send(err.message);
+
+  // check if there is no new file to resize
+  if (!req.file) {
+    next(); // skip to the next middleware
+    return;
+  }
+  const extension = req.file.mimetype.split("/")[1];
+  req.body.image = `${uuid.v4()}.${extension}`;
+  // now we resize
+  const photo = await jimp.read(req.file.buffer);
+  await photo.resize(800, jimp.AUTO);
+  await photo.write(`./public/images/blogs/${req.body.image}`);
+  // once we have written the photo to our filesystem, keep going!
+  next();
+};
+
+exports.store = async (err, req, res, next) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   const blog = await new Blog(
     _.pick(req.body, ["title", "slug", "body", "image"])
   ).save();
   res.send(blog);
+};
+
+exports.test = (req, res) => {
+  res.send(res.locals.user);
 };
