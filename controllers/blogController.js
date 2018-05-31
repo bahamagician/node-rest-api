@@ -1,19 +1,8 @@
 const mongoose = require("mongoose");
 const { Blog, validate } = require("../models/Blog");
 const _ = require("lodash");
-const multer = require("multer");
 const jimp = require("jimp");
 const uuid = require("uuid");
-
-// Configure Multer
-const multerOptions = {
-  storage: multer.memoryStorage(),
-  fileFilter(req, file, next) {
-    const isPhoto = file.mimetype.startsWith("image/");
-    if (!isPhoto) req.fileValidationError = "That file type is not valid";
-    next(null, true);
-  }
-};
 
 exports.index = async (req, res) => {
   const blogs = await Blog.find().sort("_id");
@@ -25,8 +14,6 @@ exports.show = async (req, res) => {
   if (!blog) return res.status(404).send("That blog was not found");
   res.send(blog);
 };
-
-exports.upload = multer(multerOptions).single("image");
 
 exports.resize = async (req, res, next) => {
   // If multer's config detects an invalid image type...
