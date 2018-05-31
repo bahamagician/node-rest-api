@@ -3,11 +3,12 @@ const { Blog, validate } = require("../models/Blog");
 const _ = require("lodash");
 const { singleUpload } = require("../handler/upload");
 const resize = require("../handler/resize");
+const Paginate = require("../handler/Pagination-Class");
 
-// Show all blogs (must add pagination)
+// Show all blogs
 exports.index = async (req, res) => {
-  const blogs = await Blog.find().sort("_id");
-  res.send(blogs);
+  const paginate = new Paginate({ req, res, model: Blog, limit: 2 });
+  res.json(await paginate.response());
 };
 
 // Show Single Blog
