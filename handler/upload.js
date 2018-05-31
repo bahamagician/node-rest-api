@@ -10,4 +10,4 @@ const multerOptions = {
   }
 };
 
-module.exports = multer(multerOptions).single("image");
+exports.singleUpload = multer(multerOptions).single("image");
