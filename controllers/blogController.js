@@ -4,23 +4,20 @@ const _ = require("lodash");
 const { singleUpload } = require("../handler/upload");
 const resize = require("../handler/resize");
 
+// Show all blogs (must add pagination)
 exports.index = async (req, res) => {
   const blogs = await Blog.find().sort("_id");
   res.send(blogs);
 };
 
+// Show Single Blog
 exports.show = async (req, res) => {
   const blog = await Blog.find({ _id: req.params.id });
   if (!blog) return res.status(404).send("That blog was not found");
   res.send(blog);
 };
 
-exports.upload = singleUpload;
-
-exports.resize = async (req, res, next) => {
-  resize(req, res, next, "blogs", 800);
-};
-
+// Save a Blog
 exports.store = async (req, res, next) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -30,6 +27,10 @@ exports.store = async (req, res, next) => {
   res.send(blog);
 };
 
-exports.test = (req, res) => {
-  res.send(res.locals.user);
+// Upload Image Middleware
+exports.upload = singleUpload;
+
+// Resize & Save Image Middleware
+exports.resize = async (req, res, next) => {
+  resize(req, res, next, "blogs", 800);
 };
