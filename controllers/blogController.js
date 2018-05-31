@@ -10,11 +10,8 @@ const multerOptions = {
   storage: multer.memoryStorage(),
   fileFilter(req, file, next) {
     const isPhoto = file.mimetype.startsWith("image/");
-    if (isPhoto) {
-      next(null, true);
-    } else {
-      next({ message: "That filetype isn't allowed!" }, false);
-    }
+    if (!isPhoto) req.fileValidationError = "That file type is not valid";
+    next(null, true);
   }
 };
 
@@ -31,9 +28,10 @@ exports.show = async (req, res) => {
 
 exports.upload = multer(multerOptions).single("image");
 
-exports.resize = async (err, req, res, next) => {
+exports.resize = async (req, res, next) => {
   // If multer's config detects an invalid image type...
-  if (err) return res.status(400).send(err.message);
+  if (req.fileValidationError)
+    return res.status(400).json(req.fileValidationError);
 
   // check if there is no new file to resize
   if (!req.file) {
@@ -50,7 +48,7 @@ exports.resize = async (err, req, res, next) => {
   next();
 };
 
-exports.store = async (err, req, res, next) => {
+exports.store = async (req, res, next) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   const blog = await new Blog(
