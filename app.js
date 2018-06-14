@@ -7,11 +7,14 @@ const routes = require("./routes/index");
 const bodyParser = require("body-parser");
 const { graphqlExpress, graphiqlExpress } = require("apollo-server-express");
 const { schema } = require("./graphql/schema");
+const cors = require("cors");
 
 const app = express();
 
 // serves up static files from the public folder. Anything in public/ will just be served up as the file it is
 app.use(express.static("public"));
+
+app.use(cors());
 
 // Takes the raw requests and turns them into usable properties on req.body
 app.use(bodyParser.json());
