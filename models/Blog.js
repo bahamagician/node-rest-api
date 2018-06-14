@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate");
 const Joi = require("joi");
 
 // Define Schema
@@ -32,6 +33,8 @@ const blogSchema = new mongoose.Schema({
     max: 500
   }
 });
+
+blogSchema.plugin(mongoosePaginate);
 
 // Create Model
 const Blog = mongoose.model("Blog", blogSchema);
