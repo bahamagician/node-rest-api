@@ -5,6 +5,8 @@ const express = require("express");
 const error = require("./middleware/error");
 const routes = require("./routes/index");
 const bodyParser = require("body-parser");
+const { graphqlExpress, graphiqlExpress } = require("apollo-server-express");
+const { schema } = require("./graphql/schema");
 
 const app = express();
 
@@ -15,6 +17,11 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// The GraphQL & GraphiQL Endpoints
+app.use("/graphql", bodyParser.json(), graphqlExpress({ schema }));
+app.use("/graphiql", graphiqlExpress({ endpointURL: "/graphql" }));
+
+// The other routes
 app.use("/", routes);
 
 app.use(error.developmentErrors);
