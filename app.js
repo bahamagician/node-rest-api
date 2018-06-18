@@ -21,7 +21,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // The GraphQL & GraphiQL Endpoints
-app.use("/graphql", bodyParser.json(), graphqlExpress({ schema }));
+app.use(
+  "/graphql",
+  bodyParser.json(),
+  graphqlExpress(req => ({
+    schema,
+    // Make the request available to all resolvers
+    context: req
+  }))
+);
 app.use("/graphiql", graphiqlExpress({ endpointURL: "/graphql" }));
 
 // The other routes

@@ -1,11 +1,11 @@
 const { Blog } = require("../models/Blog");
 const _ = require("lodash");
 export const typeDef = `
-type Query {
+extend type Query {
     blogs: [Blog]
   }
 
-type Mutation {
+extend type Mutation {
   createBlog (
     title: String!,
     body: String!,
@@ -29,7 +29,11 @@ type Blog {
 export const resolvers = {
   Query: {
     // return list of all blogs
-    blogs: async () => await Blog.find()
+    async blogs(_, args, ctxt) {
+      // This would recieve the context and log it
+      // console.log(ctxt);
+      return await Blog.find();
+    }
   },
 
   Mutation: {
