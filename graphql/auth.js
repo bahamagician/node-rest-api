@@ -1,19 +1,16 @@
 const { User } = require("../models/User");
-const { BadUserInputError } = require("apollo-server-express");
+const { ApolloError, gql } = require("apollo-server-express");
 
-export const typeDef = `
+export const typeDef = gql`
+  extend type Mutation {
+    loginUser(username: String!, password: String!): TokenResponse
+  }
 
-extend type Mutation {
-  loginUser (
-    username: String!,
-    password: String!,
-  ): TokenResponse,
-}
+  type TokenResponse {
+    success: Boolean
+    token: String
+  }
 
-type TokenResponse {
-    success: Boolean,
-    token: String,
-}
 `;
 
 export const resolvers = {
@@ -24,8 +21,7 @@ export const resolvers = {
       const user = await User.findOne({ username });
 
       if (!user) {
-        result.success = false;
-        return result;
+        throw new ApolloError("Invalid Username/Password Combos", 400);
       }
 
       const isValidPassword = await user.comparePassword(password);
@@ -34,9 +30,7 @@ export const resolvers = {
         result.success = true;
         result.token = user.generateAuthToken();
       } else {
-        throw new BadUserInputError("Form Arguments invalid", {
-          invalidArgs: "whaps"
-        });
+        throw new ApolloError("Invalid Username/Password Combo", 400);
       }
 
       return result;

@@ -1,29 +1,26 @@
 const { Blog } = require("../models/Blog");
 const _ = require("lodash");
-export const typeDef = `
-extend type Query {
+const { gql } = require("apollo-server-express");
+
+export const typeDef = gql`
+  extend type Query {
     blogs: [Blog]
   }
 
-extend type Mutation {
-  createBlog (
-    title: String!,
-    body: String!,
+  extend type Mutation {
+    createBlog(title: String!, body: String!, image: String): Blog
+
+    deleteBlog(id: ID!): Blog
+  }
+
+  type Blog {
+    id: ID
+    title: String
+    slug: String
+    body: String
     image: String
-  ): Blog,
+  }
 
-  deleteBlog (
-    id: ID!
-  ): Blog
-}
-
-type Blog {
-      id: ID,
-      title: String,
-      slug: String,
-      body: String,
-      image: String
-    }
 `;
 
 export const resolvers = {

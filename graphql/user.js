@@ -1,27 +1,24 @@
 const { User } = require("../models/User");
 const _ = require("lodash");
+const { gql } = require("apollo-server-express");
 
-export const typeDef = `
-extend type Query {
+export const typeDef = gql`
+  extend type Query {
     users: [User]
   }
 
-extend type Mutation {
-  createUser (
-    username: String!,
-    password: String!,
-  ): User,
+  extend type Mutation {
+    createUser(username: String!, password: String!): User
 
-  deleteUser (
-    id: ID!
-  ): User
-}
+    deleteUser(id: ID!): User
+  }
 
-type User {
-      id: ID,
-      username: String,
-      password: String,
-    }
+  type User {
+    id: ID
+    username: String
+    password: String
+  }
+
 `;
 
 export const resolvers = {
