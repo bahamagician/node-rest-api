@@ -27,5 +27,8 @@ export const server = new ApolloServer({
       message: error.message,
       statusCode: error.extensions.code
     };
-  }
+  },
+  context: ({ req }) => ({
+    req
+  })
 });
