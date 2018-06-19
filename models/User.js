@@ -13,21 +13,12 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-UserSchema.pre("save", function(next) {
+UserSchema.pre("save", async function(next) {
   var user = this;
   if (this.isModified("password") || this.isNew) {
-    bcrypt.genSalt(10, function(err, salt) {
-      if (err) {
-        return next(err);
-      }
-      bcrypt.hash(user.password, salt, function(err, hash) {
-        if (err) {
-          return next(err);
-        }
-        user.password = hash;
-        next();
-      });
-    });
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+    next();
   } else {
     return next();
   }
