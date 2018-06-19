@@ -1,5 +1,4 @@
 const { User } = require("../models/User");
-var jwt = require("jsonwebtoken");
 
 export const typeDef = `
 
@@ -32,13 +31,7 @@ export const resolvers = {
 
       if (isValidPassword) {
         result.success = true;
-        result.token = jwt.sign(
-          {
-            id: user.id,
-            username: user.username
-          },
-          process.env.SECRET
-        );
+        result.token = user.generateAuthToken();
       } else {
         result.success = false;
       }
