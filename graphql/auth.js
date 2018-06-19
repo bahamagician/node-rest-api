@@ -1,4 +1,5 @@
 const { User } = require("../models/User");
+const { BadUserInputError } = require("apollo-server-express");
 
 export const typeDef = `
 
@@ -33,7 +34,9 @@ export const resolvers = {
         result.success = true;
         result.token = user.generateAuthToken();
       } else {
-        result.success = false;
+        throw new BadUserInputError("Form Arguments invalid", {
+          invalidArgs: "whaps"
+        });
       }
 
       return result;
