@@ -7,13 +7,14 @@ const routes = require("./routes/index");
 const bodyParser = require("body-parser");
 const { server } = require("./graphql/schema");
 const cors = require("cors");
+const auth = require("./middleware/auth");
 
 const app = express();
 
 // serves up static files from the public folder. Anything in public/ will just be served up as the file it is
 app.use(express.static("public"));
 
-app.use(cors());
+app.use(cors(), auth);
 
 // Takes the raw requests and turns them into usable properties on req.body
 app.use(bodyParser.json());

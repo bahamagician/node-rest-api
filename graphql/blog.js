@@ -1,7 +1,6 @@
 const { Blog } = require("../models/Blog");
 const _ = require("lodash");
 const { ApolloError, gql } = require("apollo-server-express");
-const jwt = require("jsonwebtoken");
 
 export const typeDef = gql`
   extend type Query {
@@ -36,13 +35,8 @@ export const resolvers = {
 
   Mutation: {
     // Create a New Blog
-    async createBlog(_, { title, body, image }, ctxt) {
-      const token = ctxt.req.headers.authorization;
-      try {
-        const decoded = jwt.verify(token, process.env.SECRET);
-      } catch (ex) {
-        throw new ApolloError("Unauthorized", 401);
-      }
+    async createBlog(_, { title, body, image }, { user }) {
+      if (!user) throw new ApolloError("Unauthorized");
       const blog = await new Blog({
         title,
         slug: title,

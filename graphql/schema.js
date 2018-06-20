@@ -22,13 +22,8 @@ const resolvers = {};
 export const server = new ApolloServer({
   typeDefs: [Query, Blog, User, Auth],
   resolvers: merge(resolvers, UserResolvers, BlogResolvers, AuthResolvers),
-  formatError: error => {
-    return {
-      message: error.message,
-      statusCode: error.extensions.code
-    };
-  },
+
   context: ({ req }) => ({
-    req
+    user: req.user
   })
 });
