@@ -1,5 +1,5 @@
 const { User } = require("../models/User");
-const { ApolloError, gql } = require("apollo-server-express");
+const { UserInputError, gql } = require("apollo-server-express");
 
 export const typeDef = gql`
   extend type Mutation {
@@ -21,7 +21,7 @@ export const resolvers = {
       const user = await User.findOne({ username });
 
       if (!user) {
-        throw new ApolloError("Invalid Username/Password Combos", 400);
+        throw new UserInputError("Invalid Username/Password Combo");
       }
 
       const isValidPassword = await user.comparePassword(password);

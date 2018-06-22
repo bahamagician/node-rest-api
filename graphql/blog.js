@@ -1,6 +1,6 @@
 const { Blog } = require("../models/Blog");
 const _ = require("lodash");
-const { ApolloError, gql } = require("apollo-server-express");
+const { AuthenticationError, gql } = require("apollo-server-express");
 
 export const typeDef = gql`
   extend type Query {
@@ -36,7 +36,7 @@ export const resolvers = {
   Mutation: {
     // Create a New Blog
     async createBlog(_, { title, body, image }, { user }) {
-      if (!user) throw new ApolloError("Unauthorized");
+      if (!user) throw new AuthenticationError("You must be logged in");
       const blog = await new Blog({
         title,
         slug: title,
