@@ -26,7 +26,7 @@ export const typeDef = gql`
 export const resolvers = {
   Query: {
     // return list of all blogs
-    async blogs(_, args, ctxt) {
+    async blogs(_, args, { user }) {
       // This would recieve the context and log it
       // console.log(ctxt);
       return await Blog.find();
@@ -47,7 +47,8 @@ export const resolvers = {
     },
 
     // Delete a Blog
-    async deleteBlog(_, { id }) {
+    async deleteBlog(_, { id }, { user }) {
+      if (!user) throw new AuthenticationError("You must be logged in");
       const result = await Blog.deleteOne({ _id: id });
       return result;
     }
