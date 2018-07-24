@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const homeController = require("../controllers/homeController");
 const blogController = require("../controllers/blogController");
+const authController = require("../controllers/authController");
 
 router.get("/", homeController.index);
 
@@ -14,5 +15,6 @@ router.post(
   blogController.resize,
   blogController.store
 );
+router.post("/login", authController.login);
 
 module.exports = router;

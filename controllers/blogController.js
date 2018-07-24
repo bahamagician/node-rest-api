@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const { Blog, validate } = require("../models/Blog");
 const _ = require("lodash");
-const { singleUpload } = require("../handler/upload");
-const resize = require("../handler/resize");
+const { singleUpload } = require("../helpers/upload");
+const resize = require("../helpers/resize");
 
 // Show all blogs
 exports.index = async (req, res) => {
